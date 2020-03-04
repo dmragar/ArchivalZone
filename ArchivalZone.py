@@ -8,9 +8,9 @@ dbx.users_get_current_account()
 
 
 def get_dbx_paths(folder):
-    '''
+    """
     dropbox specific functions for creating list of files in directory
-    '''
+    """
     file_list = []
     result = dbx.files_list_folder(folder, recursive=True)
 
@@ -28,10 +28,10 @@ def get_dbx_paths(folder):
 
 
 def match_filename(paths, pattern):
-    '''
+    """
     Input a list of paths, check for matches of filename or file extension, return the matched list.
     The rules for filename pattern matching can be found in the fnmatch docs.
-    '''
+    """
     new_list = []
 
     for file in paths:
@@ -43,11 +43,11 @@ def match_filename(paths, pattern):
 
 
 def dbx_pathlist_to_df(list_of_files):
-    '''
+    """
     Download paths into Pandas DF.
     Utilizes download_master for QualityZone2
     *Excel args specify 2nd sheet*
-    '''
+    """
     list_of_df = []
     for f in list_of_files:
         if f.endswith('.csv'):
