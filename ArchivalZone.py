@@ -93,23 +93,21 @@ def file_to_df(path):
     :param path: the file in question
     :return: pandas DF
     """
-        if path.endswith('.csv'):
-            _, res = dbx.files_download(path)
-            with io.BytesIO(res.content) as stream:
-                df = pd.read_csv(stream,
-                                 index_col=0,
-                                 na_values='NAN')
-                df.index = pd.to_datetime(df.index)
-            return df
-
-        elif path.endswith('.xlsx'):
-            _, res = dbx.files_download(path)
-            with io.BytesIO(res.content) as stream:
-                df = pd.read_excel(stream,
-                                   sheet_name=1,
-                                   index_col=0,
-                                   na_values='NAN')
-                df.index = pd.to_datetime(df.index)
-            return df
-
-
+    if path.endswith('.csv'):                   
+        _, res = dbx.files_download(path)       
+        with io.BytesIO(res.content) as stream: 
+            df = pd.read_csv(stream,            
+                         index_col=0,       
+                         na_values='NAN')   
+            df.index = pd.to_datetime(df.index) 
+        return df                               
+                                            
+    elif path.endswith('.xlsx'):                
+        _, res = dbx.files_download(path)       
+        with io.BytesIO(res.content) as stream: 
+            df = pd.read_excel(stream,          
+                            sheet_name=1,    
+                            index_col=0,     
+                            na_values='NAN') 
+            df.index = pd.to_datetime(df.index) 
+        return df                               
