@@ -8,7 +8,6 @@ import io
 dropbox_config = 'auth.yaml'
 
 #os.chdir('/Users/dillon/python_projects/ipynb/lib')
-#test2
 
 with open(dropbox_config, 'r') as config_file:
     config = yaml.safe_load(config_file)
