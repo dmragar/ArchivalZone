@@ -7,7 +7,7 @@ import io
 
 dropbox_config = 'auth.yaml'
 
-#os.chdir('/Users/dillon/python_projects/ipynb/lib')
+os.getcwd()
 
 with open(dropbox_config, 'r') as config_file:
     config = yaml.safe_load(config_file)
@@ -51,11 +51,12 @@ def match_filename(paths, pattern):
     return new_list
 
 
-def dbx_pathlist_to_df(list_of_files):
+def dbx_pathlist_to_df(list_of_files, xls_index_col=0):
     """
     Download paths into Pandas DF.
     Utilizes download_master for QualityZone2, with rules for .csv and .xlsx
-    *Excel args specify 2nd sheet*
+    :param xls_index_col: location of index in old xls files
+    :return: pandas DF
     """
     list_of_df = []
     for f in list_of_files:
@@ -77,6 +78,16 @@ def dbx_pathlist_to_df(list_of_files):
                                na_values='NAN')
                 df.index = pd.to_datetime(df.index)
             list_of_df.append(df)
+            
+        elif f.endswith('.xls'):
+            _, res = dbx.files_download(f)
+            with io.BytesIO(res.content) as stream:
+                df = pd.read_excel(stream,
+                               sheet_name=1,
+                               index_col=xls_index_col,
+                               na_values='NAN')
+                df.index = pd.to_datetime(df.index)
+            list_of_df.append(df)
 
     return list_of_df
 
@@ -84,7 +95,7 @@ def dbx_pathlist_to_df(list_of_files):
 def print_columns(list):
     # for QC of list
     for f in list:
-        print('%s has %d columns' % (f , len(f.columns)))
+        print('%d columns' % len(f.columns))
         
         
 def file_to_df(path):
@@ -93,21 +104,23 @@ def file_to_df(path):
     :param path: the file in question
     :return: pandas DF
     """
-    if path.endswith('.csv'):                   
-        _, res = dbx.files_download(path)       
-        with io.BytesIO(res.content) as stream: 
-            df = pd.read_csv(stream,            
-                         index_col=0,       
-                         na_values='NAN')   
-            df.index = pd.to_datetime(df.index) 
-        return df                               
-                                            
-    elif path.endswith('.xlsx'):                
-        _, res = dbx.files_download(path)       
-        with io.BytesIO(res.content) as stream: 
-            df = pd.read_excel(stream,          
-                            sheet_name=1,    
-                            index_col=0,     
-                            na_values='NAN') 
-            df.index = pd.to_datetime(df.index) 
-        return df                               
+    if path.endswith('.csv'):
+        _, res = dbx.files_download(path)
+        with io.BytesIO(res.content) as stream:
+            df = pd.read_csv(stream,
+                             index_col=0,
+                             na_values='NAN')
+            df.index = pd.to_datetime(df.index)
+        return df
+
+    elif path.endswith('.xlsx'):
+        _, res = dbx.files_download(path)
+        with io.BytesIO(res.content) as stream:
+            df = pd.read_excel(stream,
+                               sheet_name=1,
+                               index_col=0,
+                               na_values='NAN')
+            df.index = pd.to_datetime(df.index)
+        return df
+
+
