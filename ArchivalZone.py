@@ -51,11 +51,13 @@ def match_filename(paths, pattern):
     return new_list
 
 
-def dbx_pathlist_to_df(list_of_files, xls_index_col=0):
+def dbx_pathlist_to_df(list_of_files, xls_index_col=0, xls_skip_rows=0, xls_sheet_name=0, xlsx_sheet_num=1):
     """
     Download paths into Pandas DF.
     Utilizes download_master for QualityZone2, with rules for .csv and .xlsx
     :param xls_index_col: location of index in old xls files
+    :param xls_skip_rows: skip rows at top of xls file
+    :param xls_sheet_name: name OR num
     :return: pandas DF
     """
     list_of_df = []
@@ -68,34 +70,40 @@ def dbx_pathlist_to_df(list_of_files, xls_index_col=0):
                              na_values='NAN')
                 df.index = pd.to_datetime(df.index)
             list_of_df.append(df)
+            print(f)
 
         elif f.endswith('.xlsx'):
             _, res = dbx.files_download(f)
             with io.BytesIO(res.content) as stream:
                 df = pd.read_excel(stream,
-                               sheet_name=1,
+                               sheet_name=xlsx_sheet_num,
                                index_col=0,
                                na_values='NAN')
                 df.index = pd.to_datetime(df.index)
             list_of_df.append(df)
+            print(f)
             
         elif f.endswith('.xls'):
             _, res = dbx.files_download(f)
             with io.BytesIO(res.content) as stream:
                 df = pd.read_excel(stream,
-                               sheet_name=1,
-                               index_col=xls_index_col,
-                               na_values='NAN')
+                                sheet_name=xls_sheet_name,
+                                index_col=xls_index_col,
+                                skiprows=xls_skip_rows,
+                                na_values='NAN')
                 df.index = pd.to_datetime(df.index)
             list_of_df.append(df)
+            print(f)
 
     return list_of_df
 
 
 def print_columns(list):
-    # for QC of list
-    for f in list:
-        print('%d columns' % len(f.columns))
+    """
+    Returns the number of columns for each dataframe in a list of dataframes.
+    """
+    for i in range(len(list)):
+            print('Dataframe ' + str(i) + ' in list has: ' + str(len(list[i].columns)) + ' columns')
         
         
 def file_to_df(path):
@@ -122,5 +130,8 @@ def file_to_df(path):
                                na_values='NAN')
             df.index = pd.to_datetime(df.index)
         return df
+
+
+
 
 
