@@ -7,8 +7,6 @@ import io
 
 dropbox_config = 'auth.yaml'
 
-os.getcwd()
-
 with open(dropbox_config, 'r') as config_file:
     config = yaml.safe_load(config_file)
 
