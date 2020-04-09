@@ -129,7 +129,40 @@ def file_to_df(path):
             df.index = pd.to_datetime(df.index)
         return df
 
-
+def time_zero(df):
+    """
+    Determines if a datalogger clock (or any Pandas DF with datetime index) is increminting off of a 00:00 start time. 
+    If odd clock entries are found, only the first instance  is printed. Ex: 2019-08-13 10:43:00. 
+    :param df: dataframe
+    """
+    failures = 0
+    first_run = True
+    for i in df.index.astype(str):
+        if (i.endswith('0:00')) == False:
+            failures += 1
+            if first_run:
+                print('First timestamp misalignment found at ' + str(i))
+                first_run=False
+    print(str(failures) + ' total timestamps misaligned in DF')
+    print()
+       
+def check_wy(df, wy):
+    """
+    check if dataframe contains dates outside of the water year. 
+    Returns df with data outside range.
+    Dataframe must have datetime index. 
+    :param wy: Water Year in YY format, e.g. WY2011 is 11
+    """
+    start_remove = pd.to_datetime('20' + str(wy-1) + '-10-01 00:00:00')
+    end_remove = pd.to_datetime('20' + str(wy) + '-10-01 00:00:00')
+    
+    df_outside = df.loc[(df.index < start_remove) | (df.index > end_remove)]
+    if len(df_outside) > 0:
+        print('Number of timestamps outside of WY' + '20' + str(wy) + ': ' + str(len(df_outside)))
+        print('---------------------------------------------')
+    else:
+        print('No timestamps found outside of WY' + '20' + str(wy))
+    print(df_outside)
 
 
 
