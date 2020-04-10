@@ -16,7 +16,8 @@ dbx.users_get_current_account()
 
 def get_dbx_paths(folder):
     """
-    dropbox specific functions for creating list of files in directory
+    Dropbox specific functions for creating list of files in directory. 
+    Returns a list of files in the folder (and subfolders).
     """
     file_list = []
     result = dbx.files_list_folder(folder, recursive=True)
@@ -38,6 +39,7 @@ def match_filename(paths, pattern):
     """
     Input a list of paths, check for matches of filename or file extension, return the matched list.
     The rules for filename pattern matching can be found in the fnmatch docs.
+    :return: Filtered list
     """
     new_list = []
 
